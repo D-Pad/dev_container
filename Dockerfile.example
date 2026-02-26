@@ -3,8 +3,11 @@ FROM archlinux:latest
 
 # Crucial environment variables
 ENV DEV=/usr/local
-ENV GITUSER=USERNAME_HERE
+
+ENV GIT_USER=USERNAME_HERE
+ENV GIT_EMAIL=YOUR_EMAIL_HERE
 ENV GITKEY=GIT_KEY_HERE
+
 ENV DEVLOG=/var/log/developer
 ENV DOTNET_ROOT=/usr/share/dotnet
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
