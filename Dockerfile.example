@@ -1,0 +1,92 @@
+# Get latest arch container
+FROM archlinux:latest 
+
+# Crucial environment variables
+ENV DEV=/usr/local
+ENV GITUSER=USERNAME_HERE
+ENV GITKEY=GIT_KEY_HERE
+ENV DEVLOG=/var/log/developer
+ENV DOTNET_ROOT=/usr/share/dotnet
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+ENV DOTNET_NOLOGO=1
+
+# Install arch packages
+# RUN pacman -Sy --noconfirm reflector \
+#   && reflector --latest 20 \
+#     --protocol https \
+#     --sort rate \
+#     --save /etc/pacman.d/mirrorlist
+
+RUN pacman -Syyu --noconfirm
+RUN pacman -S archlinux-keyring \
+    base-devel git neovim tmux postgresql pyenv unzip less tree sudo go cmake \
+    wget ripgrep rustup \
+    nodejs npm \
+    dotnet-sdk \
+    icu \
+    tzdata --noconfirm --needed 
+
+RUN pacman -Syu --noconfirm
+
+# ---------------------------------------------------------------------------
+RUN useradd -m -G wheel -s /bin/bash dpad
+RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+RUN chown -R dpad:dpad /home/dpad
+
+USER dpad
+# ---------------------------------------------------------------------------
+
+
+# Recently, an error started being thrown because no machine ID is found.
+# Running this command fixes it
+RUN sudo systemd-machine-id-setup
+
+# Install python and rust
+RUN rustup default stable
+RUN pyenv install 3.12.5 && pyenv global 3.12.5
+
+# Copy log script
+RUN sudo mkdir /usr/local/bash
+COPY ./software/bash/log_line /usr/local/bash/log_line
+ENV PATH=$PATH:/home/dpad/.cargo/bin:/usr/local/bash:/usr/share/dotnet
+
+# Install Vue JS packages 
+RUN sudo npm install -g @vue/cli
+RUN sudo npm install -g @vue/cli-service
+RUN sudo npm install -g @vue/compiler-sfc
+
+# Copy files and setup directories
+COPY setup_files /home/dpad/setup_files
+WORKDIR /home/dpad/setup_files
+RUN sudo mv start.sh /home/dpad/start.sh
+
+# Copy files needed for development environment to their correct locations
+RUN sudo mkdir /home/dpad/.config
+RUN sudo mv nvim /home/dpad/.config/nvim
+RUN sudo tar -zxf tmux.tar.gz && sudo mv tmux /home/dpad/.config/tmux
+
+# Setup bash profile
+RUN sudo mv bashrc ../.bashrc
+RUN sudo mv bash_profile ../.bash_profile
+
+# Git credentials
+RUN sudo mv /home/dpad/setup_files/.git-credentials /home/dpad/.git-credentials
+
+# Move MariaDB config
+RUN sudo mv /home/dpad/setup_files/my.cnf /etc/my.cnf
+
+# Move other config files to their locations
+RUN sudo mkdir /home/dpad/.config/neofetch
+RUN sudo mv neofetch.conf /home/dpad/.config/neofetch/config.conf
+RUN sudo mv neofetch_art /home/dpad/.config/neofetch/art
+
+
+# Set user info, working directory, etc
+WORKDIR /home/dpad
+
+RUN git clone https://aur.archlinux.org/omnisharp-roslyn-bin.git && \
+    cd omnisharp-roslyn-bin && \
+    makepkg -si --noconfirm
+
+ENTRYPOINT ["/home/dpad/start.sh"]
+
