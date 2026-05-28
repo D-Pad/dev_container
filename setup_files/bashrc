@@ -16,7 +16,7 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias vim='nvim'
 alias vi='nvim'
-alias dblogin="PGPASSWORD=dev_db psql -U dev -h dev_db -p 5433"
+alias dblogin="PGPASSWORD=dev_db psql -U dev -h dev_db -p 5433 dev_db"
 alias psearch='/usr/local/software/python/scripts/project_search.py'
 
 # Custom terminal ID

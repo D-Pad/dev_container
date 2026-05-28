@@ -1,4 +1,79 @@
 return {
+  {
+    "williamboman/mason.nvim",
+    config = function()
+      require("mason").setup()
+    end,
+  },
+
+  {
+    "mason-org/mason-lspconfig.nvim",   -- Updated organization
+    config = function()
+      require("mason-lspconfig").setup({
+        ensure_installed = {
+          "lua_ls",
+          "bashls",
+          "pyright",
+          "rust_analyzer",
+          "vue_ls",
+          "clangd",
+          "cssls",
+        },
+        -- automatic_enable = true is the default in v2+
+      })
+    end,
+  },
+
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = { "hrsh7th/cmp-nvim-lsp" },
+    config = function()
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+      -- Apply capabilities + custom settings to each server
+      local servers = {
+        "lua_ls",
+        "bashls",
+        "pyright",
+        "rust_analyzer",
+        "clangd",
+        "cssls",
+      }
+
+      for _, server in ipairs(servers) do
+        vim.lsp.config(server, {
+          capabilities = capabilities,
+        })
+      end
+
+      -- Special config for volar
+      vim.lsp.config("vue_ls", {
+        capabilities = capabilities,
+        filetypes = {
+          "typescript",
+          "javascript",
+          "javascriptreact",
+          "typescriptreact",
+          "vue",
+        },
+      })
+
+      -- Optional: omnisharp if you need it
+      -- vim.lsp.config("omnisharp", {
+      --   capabilities = capabilities,
+      --   cmd = { "omnisharp", "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
+      -- })
+
+      -- Your keymaps
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover" })
+      vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to Definition" })
+      vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
+    end,
+  },
+}
+
+--[[
+return {
     {
         "williamboman/mason.nvim",
         config = function()
@@ -80,4 +155,5 @@ return {
         end
     },
 }
+]]--
 

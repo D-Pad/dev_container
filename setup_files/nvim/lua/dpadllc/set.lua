@@ -23,3 +23,7 @@ vim.opt.isfname:append("@-@")
 vim.opt.updatetime = 50
 vim.opt.colorcolumn = "80"
 
+-- Spell check
+vim.opt.spell = true
+vim.opt.spelllang = 'en'
+
