@@ -1,6 +1,5 @@
 log_files
 setup_files/neofetch_art
 setup_files/.git-credentials
-database/pgdata
 software/*
-Dockerfile
+.env

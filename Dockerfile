@@ -4,10 +4,6 @@ FROM archlinux:latest
 # Crucial environment variables
 ENV DEV=/usr/local
 
-ENV GIT_USER=USERNAME_HERE
-ENV GIT_EMAIL=YOUR_EMAIL_HERE
-ENV GITKEY=GIT_KEY_HERE
-
 ENV DEVLOG=/var/log/developer
 ENV DOTNET_ROOT=/usr/share/dotnet
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
@@ -23,10 +19,12 @@ ENV DOTNET_NOLOGO=1
 RUN pacman -Syyu --noconfirm
 RUN pacman -S archlinux-keyring \
     base-devel git neovim tmux postgresql pyenv unzip less tree sudo go cmake \
-    wget ripgrep rustup \
+    wget ripgrep rustup tree-sitter-cli \
     nodejs npm \
     dotnet-sdk \
+    mariadb \ 
     icu \
+    raylib libx11 libxrandr libxi libxcursor libxinerama mesa \
     tzdata --noconfirm --needed 
 
 RUN pacman -Syu --noconfirm

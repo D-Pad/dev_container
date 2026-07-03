@@ -24,8 +24,9 @@ services:
         source: ../homelab
         target: /usr/local/homelab
     ports: 
-      - 5000:5000
-      - 3000:3000 
+      - 5000-5003:5000-5003
+      - 3000-3003:3000-3003 
+      - 50051:50051 
     networks:
       - dpad_llc
     
@@ -36,32 +37,54 @@ services:
       - DEV_MODE=1
       - DB_USER_NAME=dev
       - DB_PASSWORD=dev_db
-      - DB_HOST_NAME=dev_db
+      - DB_HOST_NAME_A=dev_postgre_db
+      - DB_HOST_NAME_B=dev_maria_db
       - DB_PORT_NUM=5433
       - TZ=America/Chicago
+      - GITKEY=${GITKEY}
+      - GIT_USER=${GIT_USER}
+      - GIT_EMAIL=${GIT_EMAIL}
 
-  dev_db:
+  dev_postgre_db:
     image: postgres:latest
-    container_name: dev_db 
+    container_name: dev_postgre_db 
     restart: always
-    hostname: database
+    hostname: dev_postgre_db
     shm_size: 128mb
     ports: 
       - 5433:5433
     command: -p 5433
     volumes:
       - type: bind 
-        source: ./database/pgdata
+        source: ./database/postgre/pgdata
         target: /var/lib/postgresql
       - type: bind 
-        source: ./database/01-setup.sql
+        source: ./database/postgre/01-setup.sql
         target: /docker-entrypoint-initdb.d/01-setup.sql
     environment:
-      - POSTGRES_PASSWORD=dev_db
-      - POSTGRES_USER=dev 
-      - POSTGRES_DB=dev_db
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
     networks:
       - dpad_llc
+
+  dev_maria_db:
+    image: mariadb:latest
+    container_name: dev_maria_db 
+    restart: always
+    hostname: dev_maria_db
+    volumes:
+      - type: bind 
+        source: ./database/maria/.db
+        target: /var/lib/mysql
+      - type: bind 
+        source: ./database/maria/perms.sql
+        target: /docker-entrypoint-initdb.d/perms.sql
+    environment:
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    networks:
+      - dpad_llc
+
 
 volumes:
   dpad_llc_app:
