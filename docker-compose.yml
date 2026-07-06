@@ -1,4 +1,5 @@
 services:
+
   dev:
     build: .
     stdin_open: true
@@ -44,6 +45,9 @@ services:
       - GITKEY=${GITKEY}
       - GIT_USER=${GIT_USER}
       - GIT_EMAIL=${GIT_EMAIL}
+      - OLLAMA_API_BASE=http://local_ai_ollama:11434
+      - AIDER_MODEL=ollama_chat/qwen2.5-coder:14b
+      - AIDER_CHAT_HISTORY_FILE=/var/log/developer/aider.chat.history.md
 
   dev_postgre_db:
     image: postgres:latest

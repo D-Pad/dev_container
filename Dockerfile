@@ -5,7 +5,6 @@ FROM archlinux:latest
 ENV DEV=/usr/local
 
 ENV DEVLOG=/var/log/developer
-ENV DOTNET_ROOT=/usr/share/dotnet
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 ENV DOTNET_NOLOGO=1
 
@@ -21,7 +20,6 @@ RUN pacman -S archlinux-keyring \
     base-devel git neovim tmux postgresql pyenv unzip less tree sudo go cmake \
     wget ripgrep rustup tree-sitter-cli \
     nodejs npm \
-    dotnet-sdk \
     mariadb \ 
     icu \
     raylib libx11 libxrandr libxi libxcursor libxinerama mesa \
@@ -49,12 +47,15 @@ RUN pyenv install 3.12.5 && pyenv global 3.12.5
 # Copy log script
 RUN sudo mkdir /usr/local/bash
 COPY ./software/bash/log_line /usr/local/bash/log_line
-ENV PATH=$PATH:/home/dpad/.cargo/bin:/usr/local/bash:/usr/share/dotnet
+ENV PATH=$PATH:/home/dpad/.cargo/bin:/usr/local/bash:/home/dpad/.local/bin
 
 # Install Vue JS packages 
 RUN sudo npm install -g @vue/cli
 RUN sudo npm install -g @vue/cli-service
 RUN sudo npm install -g @vue/compiler-sfc
+
+# Install aider, for AI coding
+RUN curl -LsSf https://aider.chat/install.sh | sh
 
 # Copy files and setup directories
 COPY setup_files /home/dpad/setup_files
@@ -62,7 +63,7 @@ WORKDIR /home/dpad/setup_files
 RUN sudo mv start.sh /home/dpad/start.sh
 
 # Copy files needed for development environment to their correct locations
-RUN sudo mkdir /home/dpad/.config
+RUN sudo mkdir -p /home/dpad/.config
 RUN sudo mv nvim /home/dpad/.config/nvim
 RUN sudo tar -zxf tmux.tar.gz && sudo mv tmux /home/dpad/.config/tmux
 
@@ -85,9 +86,6 @@ RUN sudo mv neofetch_art /home/dpad/.config/neofetch/art
 # Set user info, working directory, etc
 WORKDIR /home/dpad
 
-RUN git clone https://aur.archlinux.org/omnisharp-roslyn-bin.git && \
-    cd omnisharp-roslyn-bin && \
-    makepkg -si --noconfirm
 
 ENTRYPOINT ["/home/dpad/start.sh"]
 

@@ -1,18 +1,13 @@
 return {
-  {
-    "williamboman/mason.nvim",
-    config = function()
-      require("mason").setup()
-    end,
-  },
+  { "williamboman/mason.nvim", config = function() require("mason").setup() end },
 
   {
-    "mason-org/mason-lspconfig.nvim",   -- Updated organization
+    "mason-org/mason-lspconfig.nvim",
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = {
-          "lua_ls", "bashls", "pyright", "rust_analyzer", "ts_ls", 
-          "vtsls", "vue_ls", "clangd", "cssls"
+        ensure_installed = { 
+            "lua_ls", "bashls", "pyright", "rust_analyzer", "ts_ls", 
+            "vtsls", "vue_ls", "clangd", "cssls" 
         },
       })
     end,
@@ -22,27 +17,24 @@ return {
     "neovim/nvim-lspconfig",
     dependencies = { "hrsh7th/cmp-nvim-lsp" },
     config = function()
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities = vim.tbl_deep_extend(
+        "force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-      local vue_plugin_path = vim.fn.stdpath("data") ..
-        "/mason/packages/vue-language-server/node_modules/@vue/language-server"
+      -- Optional: global defaults
+      vim.lsp.config('*', { capabilities = capabilities })
 
-      -- Apply capabilities + custom settings to each server
-      local servers = { 
-        "lua_ls", "bashls", "pyright", "rust_analyzer", "clangd", "cssls",
-      }
+      -- Vue/TS special case
+      local vue_plugin_path = vim.fn.stdpath(
+        "data"
+      ) .. "/mason/packages/vue-language-server/node_modules/@vue/language-server"
 
-      for _, server in ipairs(servers) do
-        vim.lsp.config(server, { capabilities = capabilities })
-      end
-
-      -- === TypeScript + Vue integration ===
       vim.lsp.config("vtsls", {
         capabilities = capabilities,
         filetypes = { 
           "typescript", 
           "javascript", 
-          "javascriptreact", 
+          "javascriptreact",
           "typescriptreact", 
           "vue" 
         },
@@ -50,31 +42,35 @@ return {
           vtsls = {
             tsserver = {
               globalPlugins = {
-                {
-                  name = "@vue/typescript-plugin",
-                  location = vue_plugin_path,
-                  languages = { "vue" },
+                { 
+                  name = "@vue/typescript-plugin", 
+                  location = vue_plugin_path, 
+                  languages = { "vue" } 
                 },
               },
             },
           },
         },
       })
-        
-      -- Vue LS
+
       vim.lsp.config("vue_ls", {
         capabilities = capabilities,
-        init_options = { vue = { hybridMode = false } }, -- optional, for full features
+        init_options = { vue = { hybridMode = false } },
       })
 
-      -- Enable the servers (Neovim 0.11+ style)
-      vim.lsp.enable({ "vtsls", "vue_ls" }) 
+      -- Enable servers (this pulls in nvim-lspconfig defaults)
+      vim.lsp.enable({
+        "vtsls", "vue_ls", "lua_ls", "bashls", "pyright",
+        "rust_analyzer", "clangd", "cssls",
+      })
 
-      -- Your keymaps
+      -- Keymaps (global is fine, or use LspAttach for buffer-local)
       vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover" })
-      vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to Definition" })
-      vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
-    
+      vim.keymap.set(
+        "n", "gd", vim.lsp.buf.definition, { desc = "Go to Definition" })
+      vim.keymap.set(
+        { "n", "v" }, 
+        "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
     end,
   },
 }

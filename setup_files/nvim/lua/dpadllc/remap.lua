@@ -15,6 +15,7 @@ vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
 vim.keymap.set('n', '<leader>cd', ':cd %:p:h<CR>:pwd<CR>:!tmuxcwd<CR><CR>')
+vim.keymap.set('n', '<leader>CD', ':cd %:p:h<CR>:pwd<CR>:!tmuxcwd top<CR><CR>')
 
 vim.keymap.set('n', '<leader>h', ':noh<CR>')
 
