@@ -22,6 +22,7 @@ RUN pacman -S archlinux-keyring \
     nodejs npm \
     mariadb \ 
     icu \
+    jdk-openjdk maven gradle \
     raylib libx11 libxrandr libxi libxcursor libxinerama mesa \
     tzdata --noconfirm --needed 
 

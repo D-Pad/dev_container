@@ -7,7 +7,7 @@ return {
       require("mason-lspconfig").setup({
         ensure_installed = { 
             "lua_ls", "bashls", "pyright", "rust_analyzer", "ts_ls", 
-            "vtsls", "vue_ls", "clangd", "cssls" 
+            "vtsls", "vue_ls", "clangd", "cssls", "jdtls" 
         },
       })
     end,
@@ -73,6 +73,13 @@ return {
         "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
     end,
   },
+
+  {
+    "mfussenegger/nvim-jdtls",
+    ft = "java",
+    dependencies = { "mfussenegger/nvim-dap" }, -- For debugging
+  },
+
 }
 
 --[[

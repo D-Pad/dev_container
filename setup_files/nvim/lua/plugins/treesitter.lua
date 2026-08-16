@@ -13,7 +13,7 @@ return {
     -- Install/update parsers (do this once)
     local parsers = { 
       "vue", "typescript", "javascript", "tsx", "css", "html", "json", 
-      "lua", "python" 
+      "lua", "python", "java" 
     }
     require("nvim-treesitter").install(parsers)
   end,

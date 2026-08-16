@@ -29,6 +29,10 @@ PS1="\[$Ccol\][dpad\[$Rcol\]@\[$Ccol\]\h \[$Rcol\]\W\[$Ccol\]]\[$Ncol\]\$ "
 export PATH="/root/.pyenv/bin:$PATH"
 eval "$(pyenv init --path)"
 
+# Java JDK
+export JAVA_HOME=/usr/lib/jvm/java-26-openjdk
+export PATH="$JAVA_HOME/bin:$PATH"
+
 
 function nvimPlugs() {
     if [[ "$(tmux ls 2> /dev/null | grep 'install')" =~ "install" ]]; then 
