@@ -2,4 +2,5 @@ log_files
 setup_files/neofetch_art
 setup_files/.git-credentials
 software/*
+docker-compose.yml
 .env
