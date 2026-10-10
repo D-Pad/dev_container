@@ -31,7 +31,7 @@ RUN pacman -Syu --noconfirm
 # ---------------------------------------------------------------------------
 RUN useradd -m -G wheel -s /bin/bash dpad
 RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-RUN chown -R dpad:dpad /home/dpad
+RUN sudo chown -R dpad:dpad /home/dpad
 
 USER dpad
 # ---------------------------------------------------------------------------
